@@ -1,0 +1,20 @@
+"1.0b7.2 "(created 2011/08/05 11:03:59)"
+
+loadplugins '\.(js|penta)$'
+group user
+
+" vim: set ft=pentadactyl:
+
+nnoremap <C-[> <C-c>
+
+noremap -m n,v,i,t,c <C-c> <C-v><C-c>
+noremap -m n,v,i,t,c <C-v> <C-v><C-v>
+noremap -m n,v,i,t,c <C-x> <C-v><C-x>
+noremap -m n,v,i,t,c <C-a> <C-v><C-a>
+noremap -m n,v,i,t,c <C-z> <C-v><C-z>
+
+noremap -m i <C-n> <nop>
+
+set hlfind
+
+set hintkeys='asdfjkuiopqwer'
