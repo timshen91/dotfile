@@ -4,5 +4,4 @@ alias grep='egrep --color=auto'
 alias du='du -h'
 alias diff='diff -u'
 
-export PATH='/usr/lib/ccache/bin:'$PATH
-
+export PATH='/usr/lib/ccache:'$PATH

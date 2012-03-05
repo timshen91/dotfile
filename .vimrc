@@ -28,9 +28,4 @@ endif
 
 set fencs=utf-8,GB18030,default
 
-nnoremap <F1> <nop>
-inoremap <F1> <nop>
-vnoremap <F1> <nop>
-
-nnoremap <silent> <space> :set iskeyword+=-<CR>yiw:set iskeyword-=-<CR>:let s = 'mplayer /usr/local/share/voice-mwc/'.@0.'.wav >/dev/null 2>/dev/null &'<CR>:call system(s)<CR>
-
+"nnoremap <silent> <space> :set iskeyword+=-<CR>yiw:set iskeyword-=-<CR>:let s = 'mplayer /usr/local/share/voice-mwc/'.@0.'.wav >/dev/null 2>/dev/null &'<CR>:call system(s)<CR>

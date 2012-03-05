@@ -7,39 +7,17 @@ require("beautiful")
 -- Notification library
 require("naughty")
 
+-- Load Debian menu entries
+require("debian.menu")
+
 require("vicious")
-
--- {{{ Error handling
--- Check if awesome encountered an error during startup and fell back to
--- another config (This code will only ever execute for the fallback config)
-if awesome.startup_errors then
-    naughty.notify({ preset = naughty.config.presets.critical,
-                     title = "Oops, there were errors during startup!",
-                     text = awesome.startup_errors })
-end
-
--- Handle runtime errors after startup
-do
-    local in_error = false
-    awesome.add_signal("debug::error", function (err)
-        -- Make sure we don't go into an endless error loop
-        if in_error then return end
-        in_error = true
-
-        naughty.notify({ preset = naughty.config.presets.critical,
-                         title = "Oops, an error happened!",
-                         text = err })
-        in_error = false
-    end)
-end
--- }}}
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, and wallpapers
 beautiful.init("/usr/share/awesome/themes/zenburn/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
-terminal = "sakura"
+terminal = "x-terminal-emulator"
 editor = os.getenv("EDITOR") or "vim"
 editor_cmd = "vim"
 
@@ -71,7 +49,7 @@ layouts =
 -- {{{ Tags
 -- Define a tag table which hold all screen tags.
 tags = {}
-tags[1] = awful.tag({ 1, 2, 3, 4}, 1, layouts[2])
+tags[1] = awful.tag({ 1, 2, 3, 4 }, 1, layouts[2])
 for s = 2, screen.count() do
     -- Each screen has its own tag table.
     tags[s] = awful.tag({ 1, 2, 3, 4, 5, 6, 7, 8, 9 }, s, layouts[1])
@@ -82,12 +60,13 @@ end
 -- Create a laucher widget and a main menu
 myawesomemenu = {
    { "manual", terminal .. " -e man awesome" },
-   { "edit config", editor_cmd .. " " .. awesome.conffile },
+   { "edit config", editor_cmd .. " " .. awful.util.getdir("config") .. "/rc.lua" },
    { "restart", awesome.restart },
    { "quit", awesome.quit }
 }
 
 mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
+                                    { "Debian", debian.menu.Debian_menu.Debian },
                                     { "open terminal", terminal }
                                   }
                         })
@@ -119,17 +98,11 @@ mytaglist.buttons = awful.util.table.join(
 mytasklist = {}
 mytasklist.buttons = awful.util.table.join(
                      awful.button({ }, 1, function (c)
-                                              if c == client.focus then
-                                                  c.minimized = true
-                                              else
-                                                  if not c:isvisible() then
-                                                      awful.tag.viewonly(c:tags()[1])
-                                                  end
-                                                  -- This will also un-minimize
-                                                  -- the client, if needed
-                                                  client.focus = c
-                                                  c:raise()
+                                              if not c:isvisible() then
+                                                  awful.tag.viewonly(c:tags()[1])
                                               end
+                                              client.focus = c
+                                              c:raise()
                                           end),
                      awful.button({ }, 3, function ()
                                               if instance then
@@ -183,7 +156,7 @@ batwidget = widget({ type = "textbox"})
 vicious.register(cpuwidget, vicious.widgets.cpu, "$1", 2)
 vicious.register(memwidget, vicious.widgets.mem, "$1", 2)
 vicious.register(netwidget, vicious.widgets.net, "${wlan0 down_kb}", 2)
-vicious.register(iowidget, vicious.widgets.dio, "${sda total_kb}", 2)
+vicious.register(iowidget, vicious.widgets.dio, "${sda total_kb}")
 vicious.register(batwidget, vicious.widgets.bat, "$2%", 11, "BAT1")
 
 for s = 1, screen.count() do
@@ -210,7 +183,7 @@ for s = 1, screen.count() do
     -- Add widgets to the wibox - order matters
     mywibox[s].widgets = {
         {
-            --mylauncher,
+            -- mylauncher,
             mytaglist[s],
             mypromptbox[s],
             layout = awful.widget.layout.horizontal.leftright
@@ -218,7 +191,7 @@ for s = 1, screen.count() do
         mylayoutbox[s],
         mytextclock,
         s == 1 and mysystray or nil,
-		batwidget, iowidget, netwidget, memwidget, cpuwidget,
+        batwidget, iowidget, netwidget, memwidget, cpuwidget,
         mytasklist[s],
         layout = awful.widget.layout.horizontal.rightleft
     }
@@ -235,9 +208,6 @@ root.buttons(awful.util.table.join(
 
 -- {{{ Key bindings
 globalkeys = awful.util.table.join(
-    awful.key({"Control"}, "F1", function () awful.util.spawn("amixer set Master mute") end),
-    awful.key({"Control"}, "F2", function () awful.util.spawn("amixer set Master 5%- unmute") awful.util.spawn("mplayer /usr/share/sounds/freedesktop/stereo/audio-volume-change.oga &")end),
-    awful.key({"Control"}, "F3", function () awful.util.spawn("amixer set Master 5%+ unmute") awful.util.spawn("mplayer /usr/share/sounds/freedesktop/stereo/audio-volume-change.oga &")end),
     awful.key({ modkey,           }, "Left",   awful.tag.viewprev       ),
     awful.key({ modkey,           }, "Right",  awful.tag.viewnext       ),
     awful.key({ modkey,           }, "Escape", awful.tag.history.restore),
@@ -282,8 +252,6 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "space", function () awful.layout.inc(layouts,  1) end),
     awful.key({ modkey, "Shift"   }, "space", function () awful.layout.inc(layouts, -1) end),
 
-    awful.key({ modkey, "Control" }, "n", awful.client.restore),
-
     -- Prompt
     awful.key({ modkey },            "r",     function () mypromptbox[mouse.screen]:run() end),
 
@@ -304,12 +272,7 @@ clientkeys = awful.util.table.join(
     awful.key({ modkey,           }, "o",      awful.client.movetoscreen                        ),
     awful.key({ modkey, "Shift"   }, "r",      function (c) c:redraw()                       end),
     awful.key({ modkey,           }, "t",      function (c) c.ontop = not c.ontop            end),
-    awful.key({ modkey,           }, "n",
-        function (c)
-            -- The client currently has the input focus, so it cannot be
-            -- minimized, since minimized clients can't have the focus.
-            c.minimized = true
-        end),
+    awful.key({ modkey,           }, "n",      function (c) c.minimized = not c.minimized    end),
     awful.key({ modkey,           }, "m",
         function (c)
             c.maximized_horizontal = not c.maximized_horizontal
@@ -345,9 +308,7 @@ for i = 1, keynumber do
         awful.key({ modkey, "Shift" }, "#" .. i + 9,
                   function ()
                       if client.focus and tags[client.focus.screen][i] then
-						  --temp=tags[client.focus.screen][i]
                           awful.client.movetotag(tags[client.focus.screen][i])
-						  --awful.tag.viewonly(temp)
                       end
                   end),
         awful.key({ modkey, "Control", "Shift" }, "#" .. i + 9,
@@ -376,10 +337,9 @@ awful.rules.rules = {
                      focus = true,
                      keys = clientkeys,
                      buttons = clientbuttons } },
-    { rule = { class = "Emacs" },
-      properties = { floating = true} },
-    { rule = { class = "Firefox" },
-      except = { instance= "Navigator" },
+    { rule = { class = "iceweasel" },
+      except = { instance = "Navigator" } },
+    { rule = { class = "wicd" },
       properties = { floating = true } },
     { rule = { class = "MPlayer" },
       properties = { floating = true } },
@@ -387,13 +347,6 @@ awful.rules.rules = {
       properties = { floating = true } },
     { rule = { class = "gimp" },
       properties = { floating = true } },
-    { rule = { role = "buddy_list" },
-      properties = { floating = true } },
-    { rule = { name = "Wicd Network Manager" },
-      properties = { floating = true } },
-    { rule = { class = "Eclipse" },
-      properties = { floating = true } }
-
     -- Set Firefox to always map on tags number 2 of screen 1.
     -- { rule = { class = "Firefox" },
     --   properties = { tag = tags[1][2] } },
@@ -424,7 +377,7 @@ client.add_signal("manage", function (c, startup)
             awful.placement.no_overlap(c)
             awful.placement.no_offscreen(c)
         end
-		c.size_hints_honor = false
+        c.size_hints_honor = false
     end
 end)
 
@@ -432,12 +385,7 @@ client.add_signal("focus", function(c) c.border_color = beautiful.border_focus e
 client.add_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
 
---awful.util.spawn("killall nm-applet")
---awful.util.spawn("nm-applet &")
+awful.util.spawn("killall xcompmgr")
+awful.util.spawn("xcompmgr")
 awful.util.spawn("killall wicd-client")
 awful.util.spawn("wicd-client &")
-awful.util.spawn("killall ibus-daemon")
-awful.util.spawn("ibus-daemon")
-awful.util.spawn("killall xcompmgr")
-awful.util.spawn("xcompmgr -Ssc -c -n -fF -I-10 -O-10 -D1 -t-3 -l-4 -r4 &")
-
