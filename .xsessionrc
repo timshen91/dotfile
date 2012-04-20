@@ -1,3 +1,2 @@
 xset r rate 300 30
-xcompmgr &
-fcitx &
+xcompmgr -f -D 3 &
