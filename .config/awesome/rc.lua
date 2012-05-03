@@ -155,7 +155,7 @@ batwidget = widget({ type = "textbox"})
 
 vicious.register(cpuwidget, vicious.widgets.cpu, "$1", 2)
 vicious.register(memwidget, vicious.widgets.mem, "$1", 2)
-vicious.register(netwidget, vicious.widgets.net, "${wlan0 down_kb}", 2)
+vicious.register(netwidget, vicious.widgets.net, "${eth0 down_kb}", 2)
 vicious.register(iowidget, vicious.widgets.dio, "${total_mb}", 2, "sda")
 vicious.register(batwidget, vicious.widgets.bat, "$2%", 11, "BAT1")
 
@@ -208,18 +208,18 @@ root.buttons(awful.util.table.join(
 
 -- {{{ Key bindings
 globalkeys = awful.util.table.join(
-    awful.key({ "Control" }, "F1", 
+    awful.key({}, "XF86AudioMute", 
         function ()
             awful.util.spawn("amixer set Master mute")
         end
     ),
-    awful.key({ "Control" }, "F2", 
+    awful.key({}, "XF86AudioLowerVolume", 
         function ()
             awful.util.spawn("amixer set Master 5%- unmute")
             awful.util.spawn("mplayer /usr/share/sounds/freedesktop/stereo/audio-volume-change.oga &")
         end
     ),
-    awful.key({ "Control" }, "F3", 
+    awful.key({}, "XF86AudioRaiseVolume", 
         function ()
             awful.util.spawn("amixer set Master 5%+ unmute")
             awful.util.spawn("mplayer /usr/share/sounds/freedesktop/stereo/audio-volume-change.oga &")
@@ -357,6 +357,8 @@ awful.rules.rules = {
     { rule = { class = "iceweasel" },
       except = { instance = "Navigator" } },
     { rule = { class = "wicd" },
+      properties = { floating = true } },
+    { rule = { class = "Zathura" },
       properties = { floating = true } },
     { rule = { class = "MPlayer" },
       properties = { floating = true } },
