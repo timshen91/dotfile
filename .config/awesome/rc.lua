@@ -153,11 +153,21 @@ netwidget:set_max_value(128)
 
 batwidget = widget({ type = "textbox"})
 
+volumewidget = widget({ type = "textbox"} )
+
 vicious.register(cpuwidget, vicious.widgets.cpu, "$1", 2)
 vicious.register(memwidget, vicious.widgets.mem, "$1", 2)
 vicious.register(netwidget, vicious.widgets.net, "${eth0 down_kb}", 2)
 vicious.register(iowidget, vicious.widgets.dio, "${total_mb}", 2, "sda")
-vicious.register(batwidget, vicious.widgets.bat, "$2%", 11, "BAT1")
+vicious.register(batwidget, vicious.widgets.bat, " $2%", 11, "BAT1")
+vicious.register(volumewidget, vicious.widgets.volume,
+function(widget, args)
+  if args[2] == "♩" then
+      return " M"
+  else
+      return " " .. args[1] .. "%"
+  end
+end, 2, "Master")
 
 for s = 1, screen.count() do
     -- Create a promptbox for each screen
@@ -191,7 +201,7 @@ for s = 1, screen.count() do
         mylayoutbox[s],
         mytextclock,
         s == 1 and mysystray or nil,
-        batwidget, iowidget, netwidget, memwidget, cpuwidget,
+        volumewidget, batwidget, iowidget, netwidget, memwidget, cpuwidget,
         mytasklist[s],
         layout = awful.widget.layout.horizontal.rightleft
     }
@@ -211,18 +221,21 @@ globalkeys = awful.util.table.join(
     awful.key({}, "XF86AudioMute", 
         function ()
             awful.util.spawn("amixer set Master mute")
+            vicious.force({ volumewidget, })
         end
     ),
     awful.key({}, "XF86AudioLowerVolume", 
         function ()
             awful.util.spawn("amixer set Master 5%- unmute")
             awful.util.spawn("mplayer /usr/share/sounds/freedesktop/stereo/audio-volume-change.oga &")
+            vicious.force({ volumewidget, })
         end
     ),
     awful.key({}, "XF86AudioRaiseVolume", 
         function ()
             awful.util.spawn("amixer set Master 5%+ unmute")
             awful.util.spawn("mplayer /usr/share/sounds/freedesktop/stereo/audio-volume-change.oga &")
+            vicious.force({ volumewidget, })
         end
     ),
     awful.key({ modkey,           }, "Left",   awful.tag.viewprev       ),
