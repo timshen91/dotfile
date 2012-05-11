@@ -49,7 +49,7 @@ layouts =
 -- {{{ Tags
 -- Define a tag table which hold all screen tags.
 tags = {}
-tags[1] = awful.tag({ 1, 2, 3, 4 }, 1, layouts[2])
+tags[1] = awful.tag({ 1, 2, 3, 4 }, 1, layouts[5])
 for s = 2, screen.count() do
     -- Each screen has its own tag table.
     tags[s] = awful.tag({ 1, 2, 3, 4, 5, 6, 7, 8, 9 }, s, layouts[1])
@@ -167,7 +167,7 @@ function(widget, args)
   else
       return " " .. args[1] .. "%"
   end
-end, 2, "Master")
+end, 11, "Master")
 
 for s = 1, screen.count() do
     -- Create a promptbox for each screen
