@@ -238,6 +238,26 @@ globalkeys = awful.util.table.join(
             vicious.force({ volumewidget, })
         end
     ),
+--    awful.key({"Control"}, "F1", 
+--        function ()
+--            awful.util.spawn("amixer set Master mute")
+--            vicious.force({ volumewidget, })
+--        end
+--    ),
+--    awful.key({"Control"}, "F2", 
+--        function ()
+--            awful.util.spawn("amixer set Master 5%- unmute")
+--            awful.util.spawn("mplayer /usr/share/sounds/freedesktop/stereo/audio-volume-change.oga &")
+--            vicious.force({ volumewidget, })
+--        end
+--    ),
+--    awful.key({"Control"}, "F3", 
+--        function ()
+--            awful.util.spawn("amixer set Master 5%+ unmute")
+--            awful.util.spawn("mplayer /usr/share/sounds/freedesktop/stereo/audio-volume-change.oga &")
+--            vicious.force({ volumewidget, })
+--        end
+--    ),
     awful.key({ modkey,           }, "Left",   awful.tag.viewprev       ),
     awful.key({ modkey,           }, "Right",  awful.tag.viewnext       ),
     awful.key({ modkey,           }, "Escape", awful.tag.history.restore),
@@ -417,3 +437,5 @@ client.add_signal("focus", function(c) c.border_color = beautiful.border_focus e
 client.add_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
 awful.util.spawn("fcitx -rd &")
+awful.util.spawn("killall nm-applet")
+awful.util.spawn("nm-applet &")

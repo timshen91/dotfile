@@ -38,8 +38,10 @@ zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
 
 alias ls='ls -h --color=auto'
 alias ll='ls -l'
-alias grep='egrep --color=auto'
+alias grep='grep --color=auto'
 alias du='du -h'
 alias diff='diff -u'
 alias rm='rm -I'
 alias overcome='ssh -i ~/.ssh/innocent.pem -p 2012 -D 9999 ubuntu@46.51.240.166'
+export GOPATH=/usr/local/src/gowork
+export PATH=$GOPATH/bin:$PATH

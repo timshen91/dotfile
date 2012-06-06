@@ -21,6 +21,7 @@ set nobk
 set title
 nnoremap <F1> <nop>
 autocmd FileType * setlocal formatoptions-=r formatoptions-=o
+autocmd FileType tex set matchpairs=
 if has("gui_running")
     set background=light
 else
