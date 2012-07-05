@@ -49,7 +49,7 @@ layouts =
 -- {{{ Tags
 -- Define a tag table which hold all screen tags.
 tags = {}
-tags[1] = awful.tag({ 1, 2, 3, 4 }, 1, layouts[5])
+tags[1] = awful.tag({ 1, 2, 3, 4 }, 1, layouts[2])
 for s = 2, screen.count() do
     -- Each screen has its own tag table.
     tags[s] = awful.tag({ 1, 2, 3, 4, 5, 6, 7, 8, 9 }, s, layouts[1])
@@ -136,29 +136,29 @@ memwidget:set_background_color("#494B4F")
 memwidget:set_border_color(BODER_COLOR)
 memwidget:set_color("#00FFFF")
 
-netwidget = awful.widget.graph({ layout = awful.widget.layout.horizontal.rightleft })
-netwidget:set_width(WIDTH)
-netwidget:set_background_color("#494B4F")
-netwidget:set_border_color(BODER_COLOR)
-netwidget:set_color("#FF00FF")
-netwidget:set_scale(true)
-netwidget:set_max_value(128)
-
-iowidget = awful.widget.graph({ layout = awful.widget.layout.horizontal.rightleft })
-iowidget:set_width(WIDTH)
-iowidget:set_background_color("#494B4F")
-iowidget:set_border_color(BODER_COLOR)
-iowidget:set_color("#00FF00")
-netwidget:set_max_value(128)
-
+-- netwidget = awful.widget.graph({ layout = awful.widget.layout.horizontal.rightleft })
+-- netwidget:set_width(WIDTH)
+-- netwidget:set_background_color("#494B4F")
+-- netwidget:set_border_color(BODER_COLOR)
+-- netwidget:set_color("#FF00FF")
+-- netwidget:set_scale(true)
+-- netwidget:set_max_value(128)
+-- 
+-- iowidget = awful.widget.graph({ layout = awful.widget.layout.horizontal.rightleft })
+-- iowidget:set_width(WIDTH)
+-- iowidget:set_background_color("#494B4F")
+-- iowidget:set_border_color(BODER_COLOR)
+-- iowidget:set_color("#00FF00")
+-- iowidget:set_max_value(128)
+-- 
 batwidget = widget({ type = "textbox"})
 
 volumewidget = widget({ type = "textbox"} )
 
 vicious.register(cpuwidget, vicious.widgets.cpu, "$1", 2)
 vicious.register(memwidget, vicious.widgets.mem, "$1", 2)
-vicious.register(netwidget, vicious.widgets.net, "${eth0 down_kb}", 2)
-vicious.register(iowidget, vicious.widgets.dio, "${total_mb}", 2, "sda")
+-- vicious.register(netwidget, vicious.widgets.net, "${eth0 down_kb}", 2)
+-- vicious.register(iowidget, vicious.widgets.dio, "${total_mb}", 2, "sda")
 vicious.register(batwidget, vicious.widgets.bat, " $2%", 11, "BAT1")
 vicious.register(volumewidget, vicious.widgets.volume,
 function(widget, args)
@@ -201,7 +201,7 @@ for s = 1, screen.count() do
         mylayoutbox[s],
         mytextclock,
         s == 1 and mysystray or nil,
-        volumewidget, batwidget, iowidget, netwidget, memwidget, cpuwidget,
+        volumewidget, batwidget, memwidget, cpuwidget,-- iowidget, netwidget
         mytasklist[s],
         layout = awful.widget.layout.horizontal.rightleft
     }
@@ -227,34 +227,30 @@ globalkeys = awful.util.table.join(
     awful.key({}, "XF86AudioLowerVolume", 
         function ()
             awful.util.spawn("amixer set Master 5%- unmute")
-            awful.util.spawn("mplayer /usr/share/sounds/freedesktop/stereo/audio-volume-change.oga &")
             vicious.force({ volumewidget, })
         end
     ),
     awful.key({}, "XF86AudioRaiseVolume", 
         function ()
             awful.util.spawn("amixer set Master 5%+ unmute")
-            awful.util.spawn("mplayer /usr/share/sounds/freedesktop/stereo/audio-volume-change.oga &")
             vicious.force({ volumewidget, })
         end
     ),
---    awful.key({"Control"}, "F1", 
+--    awful.key({ modkey }, "F1", 
 --        function ()
 --            awful.util.spawn("amixer set Master mute")
 --            vicious.force({ volumewidget, })
 --        end
 --    ),
---    awful.key({"Control"}, "F2", 
+--    awful.key({ modkey }, "F2", 
 --        function ()
 --            awful.util.spawn("amixer set Master 5%- unmute")
---            awful.util.spawn("mplayer /usr/share/sounds/freedesktop/stereo/audio-volume-change.oga &")
 --            vicious.force({ volumewidget, })
 --        end
 --    ),
---    awful.key({"Control"}, "F3", 
+--    awful.key({ modkey }, "F3", 
 --        function ()
 --            awful.util.spawn("amixer set Master 5%+ unmute")
---            awful.util.spawn("mplayer /usr/share/sounds/freedesktop/stereo/audio-volume-change.oga &")
 --            vicious.force({ volumewidget, })
 --        end
 --    ),
@@ -386,19 +382,18 @@ awful.rules.rules = {
                      border_color = beautiful.border_normal,
                      focus = true,
                      keys = clientkeys,
+					 floating = true,
                      buttons = clientbuttons } },
-    { rule = { class = "iceweasel" },
-      except = { instance = "Navigator" } },
-    { rule = { class = "wicd" },
-      properties = { floating = true } },
-    { rule = { class = "Zathura" },
-      properties = { floating = true } },
-    { rule = { class = "MPlayer" },
-      properties = { floating = true } },
-    { rule = { class = "pinentry" },
-      properties = { floating = true } },
-    { rule = { class = "gimp" },
-      properties = { floating = true } },
+    { rule = { class = "X-terminal-emulator", type = "normal" },
+      properties = { floating = false } },
+    -- { rule = { class = "iceweasel" },
+    --   properties = { floating = true } },
+    -- { rule = { class = "MPlayer" },
+    --   properties = { floating = true } },
+    -- { rule = { class = "pinentry" },
+    --   properties = { floating = true } },
+    -- { rule = { class = "gimp" },
+    --   properties = { floating = true } },
     -- Set Firefox to always map on tags number 2 of screen 1.
     -- { rule = { class = "Firefox" },
     --   properties = { tag = tags[1][2] } },
@@ -436,6 +431,7 @@ end)
 client.add_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.add_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
-awful.util.spawn("fcitx -rd &")
+
+awful.util.spawn("fcitx -rd")
 awful.util.spawn("killall nm-applet")
-awful.util.spawn("nm-applet &")
+awful.util.spawn("setsid nm-applet")
