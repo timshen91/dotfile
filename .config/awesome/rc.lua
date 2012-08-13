@@ -433,5 +433,5 @@ client.add_signal("unfocus", function(c) c.border_color = beautiful.border_norma
 -- }}}
 
 awful.util.spawn("fcitx -rd")
-awful.util.spawn("killall nm-applet")
-awful.util.spawn("setsid nm-applet")
+-- awful.util.spawn("killall nm-applet")
+-- awful.util.spawn("setsid nm-applet")

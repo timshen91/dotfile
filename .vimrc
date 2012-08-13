@@ -29,7 +29,7 @@ if has("gui_running")
 else
     set background=dark
 endif
-set fencs=utf-8,GB18030,default
+set fencs=default,GB18030
 if has("cscope")
 	set csprg=/usr/bin/cscope
 	set csto=0

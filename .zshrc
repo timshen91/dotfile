@@ -194,4 +194,4 @@ alias du='du -h'
 alias diff='diff -u'
 alias rm='rm -I'
 export GOPATH=/usr/local/src/gowork
-export PATH=$PATH:$GOPATH/bin
+export PATH=/usr/lib/ccache:$PATH:/usr/local/src/go/bin:$GOPATH/bin
