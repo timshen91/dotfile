@@ -236,24 +236,6 @@ globalkeys = awful.util.table.join(
             vicious.force({ volumewidget, })
         end
     ),
---    awful.key({ modkey }, "F1", 
---        function ()
---            awful.util.spawn("amixer set Master mute")
---            vicious.force({ volumewidget, })
---        end
---    ),
---    awful.key({ modkey }, "F2", 
---        function ()
---            awful.util.spawn("amixer set Master 5%- unmute")
---            vicious.force({ volumewidget, })
---        end
---    ),
---    awful.key({ modkey }, "F3", 
---        function ()
---            awful.util.spawn("amixer set Master 5%+ unmute")
---            vicious.force({ volumewidget, })
---        end
---    ),
     awful.key({ modkey,           }, "Left",   awful.tag.viewprev       ),
     awful.key({ modkey,           }, "Right",  awful.tag.viewnext       ),
     awful.key({ modkey,           }, "Escape", awful.tag.history.restore),
@@ -287,7 +269,7 @@ globalkeys = awful.util.table.join(
     -- Standard program
     awful.key({ modkey,           }, "Return", function () awful.util.spawn(terminal) end),
     awful.key({ modkey, "Control" }, "r", awesome.restart),
-    awful.key({ modkey, "Shift"   }, "q", awesome.quit),
+    -- awful.key({ modkey, "Shift"   }, "q", awesome.quit),
 
     awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)    end),
     awful.key({ modkey,           }, "h",     function () awful.tag.incmwfact(-0.05)    end),
