@@ -1,197 +1,40 @@
-# Set up the prompt
+# Path to your oh-my-zsh configuration.
+ZSH=$HOME/.oh-my-zsh
 
-autoload -Uz promptinit
-promptinit
-prompt adam1
+# Set name of the theme to load.
+# Look in ~/.oh-my-zsh/themes/
+# Optionally, if you set this to "random", it'll load a random theme each
+# time that oh-my-zsh is loaded.
+ZSH_THEME="af-magic"
 
-setopt histignorealldups
+# Example aliases
+# alias zshconfig="mate ~/.zshrc"
+# alias ohmyzsh="mate ~/.oh-my-zsh"
 
-# Use emacs keybindings even if our EDITOR is set to vi
-bindkey -e
+# Set to this to use case-sensitive completion
+# CASE_SENSITIVE="true"
 
-# Keep 1000 lines of history within the shell and save it to ~/.zsh_history:
-HISTSIZE=1000
-SAVEHIST=1000
-HISTFILE=~/.zsh_history
+# Comment this out to disable weekly auto-update checks
+# DISABLE_AUTO_UPDATE="true"
 
-# Use modern completion system
-autoload -Uz compinit
-compinit
+# Uncomment following line if you want to disable colors in ls
+# DISABLE_LS_COLORS="true"
 
-zstyle ':completion:*' auto-description 'specify: %d'
-zstyle ':completion:*' completer _expand _complete _correct _approximate
-zstyle ':completion:*' format 'Completing %d'
-zstyle ':completion:*' group-name ''
-zstyle ':completion:*' menu select=2
-eval "$(dircolors -b)"
-zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
-zstyle ':completion:*' list-colors ''
-zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
-zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=* l:|=*'
-zstyle ':completion:*' menu select=long
-zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
-zstyle ':completion:*' use-compctl false
-zstyle ':completion:*' verbose true
+# Uncomment following line if you want to disable autosetting terminal title.
+# DISABLE_AUTO_TITLE="true"
 
-zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
-zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
+# Uncomment following line if you want red dots to be displayed while waiting for completion
+# COMPLETION_WAITING_DOTS="true"
 
+# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
+# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
+# Example format: plugins=(rails git textmate ruby lighthouse)
+plugins=(git)
 
-# gc
-prefixes=(5 6 8)
-for p in $prefixes; do
-	compctl -g "*.${p}" ${p}l
-	compctl -g "*.go" ${p}g
-done
+source $ZSH/oh-my-zsh.sh
 
-# standard go tools
-compctl -g "*.go" gofmt
-
-# gccgo
-compctl -g "*.go" gccgo
-
-# go tool
-__go_tool_complete() {
-  typeset -a commands build_flags
-  commands+=(
-    'build[compile packages and dependencies]'
-    'clean[remove object files]'
-    'doc[run godoc on package sources]'
-    'fix[run go tool fix on packages]'
-    'fmt[run gofmt on package sources]'
-    'get[download and install packages and dependencies]'
-    'help[display help]'
-    'install[compile and install packages and dependencies]'
-    'list[list packages]'
-    'run[compile and run Go program]'
-    'test[test packages]'
-    'tool[run specified go tool]'
-    'version[print Go version]'
-    'vet[run go tool vet on packages]'
-  )
-  if (( CURRENT == 2 )); then
-    # explain go commands
-    _values 'go tool commands' ${commands[@]}
-    return
-  fi
-  build_flags=(
-    '-a[force reinstallation of packages that are already up-to-date]'
-    '-n[print the commands but do not run them]'
-    "-p[number of parallel builds]:number"
-    '-x[print the commands]'
-    "-work[print temporary directory name and keep it]"
-    "-gcflags[flags for 5g/6g/8g]:flags"
-    "-ldflags[flags for 5l/6l/8l]:flags"
-    "-gccgoflags[flags for gccgo]:flags"
-  )
-  __go_list() {
-      local expl importpaths
-      declare -a importpaths
-      #$importpaths=($(go list ${words[$CURRENT]}... 2>/dev/null))
-      _wanted importpaths expl 'import paths' compadd "$@" - "${importpaths[@]}"
-  }
-  case ${words[2]} in
-  clean|doc)
-      _arguments -s -w : '*:importpaths:__go_list'
-      ;;
-  fix|fmt|list|vet)
-      _alternative ':importpaths:__go_list' ':files:_path_files -g "*.go"'
-      ;;
-  install)
-      _arguments -s -w : ${build_flags[@]} \
-        "-v[show package names]" \
-	'*:importpaths:__go_list'
-      ;;
-  get)
-      _arguments -s -w : \
-        ${build_flags[@]}
-      ;;
-  build)
-      _arguments -s -w : \
-        ${build_flags[@]} \
-        "-v[show package names]" \
-        "-o[output file]:file:_files" \
-        "*:args:{ _alternative ':importpaths:__go_list' ':files:_path_files -g \"*.go\"' }"
-      ;;
-  test)
-      _arguments -s -w : \
-        ${build_flags[@]} \
-        "-c[do not run, compile the test binary]" \
-        "-i[do not run, install dependencies]" \
-        "-v[print test output]" \
-        "-x[print the commands]" \
-        "-short[use short mode]" \
-        "-parallel[number of parallel tests]:number" \
-        "-cpu[values of GOMAXPROCS to use]:number list" \
-        "-run[run tests and examples matching regexp]:regexp" \
-        "-bench[run benchmarks matching regexp]:regexp" \
-        "-benchtime[run each benchmark during n seconds]:duration" \
-        "-timeout[kill test after that duration]:duration" \
-        "-cpuprofile[write CPU profile to file]:file:_files" \
-        "-memprofile[write heap profile to file]:file:_files" \
-        "-memprofilerate[set heap profiling rate]:number" \
-        "*:args:{ _alternative ':importpaths:__go_list' ':files:_path_files -g \"*.go\"' }"
-      ;;
-  help)
-      _values "${commands[@]}" \
-        'gopath[GOPATH environment variable]' \
-        'importpath[description of import paths]' \
-        'remote[remote import path syntax]' \
-        'testflag[description of testing flags]' \
-        'testfunc[description of testing functions]'
-      ;;
-  run)
-      _arguments -s -w : \
-          ${build_flags[@]} \
-          '*:file:_path_files -g "*.go"'
-      ;;
-  tool)
-      if (( CURRENT == 3 )); then
-          _values "go tool" $(go tool)
-          return
-      fi
-      case ${words[3]} in
-      [568]g)
-          _arguments -s -w : \
-              '-I[search for packages in DIR]:includes:_path_files -/' \
-              '-L[show full path in file:line prints]' \
-              '-S[print the assembly language]' \
-              '-V[print the compiler version]' \
-              '-e[no limit on number of errors printed]' \
-              '-h[panic on an error]' \
-              '-l[disable inlining]' \
-              '-m[print optimization decisions]' \
-              '-o[file specify output file]:file' \
-              '-p[assumed import path for this code]:importpath' \
-              '-u[disable package unsafe]' \
-              "*:file:_files -g '*.go'"
-          ;;
-      [568]l)
-          local O=${words[3]%l}
-          _arguments -s -w : \
-              '-o[file specify output file]:file' \
-              '-L[search for packages in DIR]:includes:_path_files -/' \
-              "*:file:_files -g '*.[ao$O]'"
-          ;;
-      dist)
-          _values "dist tool" banner bootstrap clean env install version
-          ;;
-      *)
-          # use files by default
-          _files
-          ;;
-      esac
-      ;;
-  esac
-}
-
-compdef __go_tool_complete go
-
-alias ls='ls -h --color=auto'
-alias ll='ls -l'
-alias grep='egrep --color=auto'
-alias du='du -h'
-alias diff='diff -u'
-alias rm='rm -I'
+# Customize to your needs...
+unsetopt sharehistory
+setopt hist_ignore_all_dups
 export GOPATH=/usr/local/src/gowork
-export PATH=/usr/lib/ccache:$PATH:/usr/local/src/go/bin:$GOPATH/bin
+export PATH=/usr/lib/ccache/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin:/usr/bin/core_perl:/usr/local/src/go/bin:$GOPATH/bin

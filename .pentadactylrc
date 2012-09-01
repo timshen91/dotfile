@@ -8,5 +8,5 @@ group user
 set hlfind
 set hintkeys='asdfjkuiopqwer'
 
-inoremap <C-n> <Esc><C-n>
-inoremap <C-p> <Esc><C-p>
+imap -builtin <C-n> <Esc><C-n>
+imap -builtin <C-p> <Esc><C-p>
