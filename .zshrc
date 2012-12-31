@@ -235,7 +235,6 @@ alias ls='ls -h --color=auto'
 alias ll='ls -l'
 alias grep='egrep --color=auto'
 alias du='du -h'
-alias diff='diff -u'
 alias rm='rm -I'
 export GOPATH=/usr/local/src/gowork
-export PATH=/usr/lib/ccache/bin:$PATH:/usr/local/src/go/bin:$GOPATH/bin:/root/.gem/ruby/1.9.1/bin:/usr/local/rvm/bin
+export PATH=$PATH:/usr/local/src/go/bin:$GOPATH/bin:/root/.gem/ruby/1.9.1/bin:/usr/local/rvm/bin
