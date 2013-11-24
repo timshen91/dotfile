@@ -1,0 +1,11 @@
+"3.5 (created: 2012/08/04 00:41:20)
+
+nmap <C-n> <nop>
+nmap <C-p> <nop>
+map <C-j> :tabnext<CR>
+map <C-k> :tabprevious<CR>
+imap <C-j> <Esc><C-j>
+imap <C-k> <Esc><C-k>
+source! /home/root/.vimperatorrc.local
+
+" vim: set ft=vimperator:
