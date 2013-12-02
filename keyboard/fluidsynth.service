@@ -1,0 +1,9 @@
+[Unit]
+Description=FluidSynth Daemon
+After=sound.target
+
+[Service]
+ExecStart=/usr/bin/fluidsynth -is -ajack -mjack -j -f /etc/fluidsynth.conf
+
+[Install]
+WantedBy=multi-user.target
